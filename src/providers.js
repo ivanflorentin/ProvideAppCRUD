@@ -62,12 +62,14 @@ export default function (compDef) {
 	const value = String(action.component[fieldName])
 	const validators = fields[fieldName].validate
 	if (validators && validators.length > 0) {
+	  let validatorPassed = true
 	  for (let validator of validators) {
 	    const valid = validator.func(value, validator.params)
 	    if (!valid) {
 	      next.isValid = false
 	      next[`${fieldName}Error`] = validator.message
 	    }
+	    else {delete next[`${fieldName}Error`]}
 	  }
 	}
       }

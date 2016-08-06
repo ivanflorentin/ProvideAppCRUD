@@ -18,12 +18,20 @@ export default function (compDef) {
 
     for (let fieldName of fieldNames) {
       const componentField = compDef.fields[fieldName]
-      const field = <Input key={fieldName} value={next[fieldName] ||''}
+      const fieldError = `${fieldName}Error`
+      let error = ''
+      if (next[fieldError]) {
+	error = <span>{next[fieldError]}</span>
+      }
+      const field = <div key={fieldName}>
+	    <Input  value={next[fieldName] ||''}
       type={componentField.uiType} label={componentField.label} name='name' icon='assignment'
       onChange={(e) => {
 	next[fieldName] = e
 	save()
       }}/>
+	      {error}
+	</div>
 	listFields.push(field)
     }
 
