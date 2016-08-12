@@ -17,6 +17,10 @@ export default function (compDef) {
     const listFields = []
 
     for (let fieldName of fieldNames) {
+	let label = fields[fieldName].label
+	if (!label || label === '') {
+	  label = fieldName
+	}
       const componentField = compDef.fields[fieldName]
       const fieldError = `${fieldName}Error`
       let error = ''
@@ -25,7 +29,7 @@ export default function (compDef) {
       }
       const field = <div key={fieldName}>
 	    <Input  value={next[fieldName] ||''}
-      type={componentField.uiType} label={componentField.label} name='name' icon={componentField.icon}
+      type={componentField.uiType} label={label} name='name' icon={componentField.icon}
       hint={componentField.hint}
       onChange={(e) => {
 	next[fieldName] = e

@@ -15,16 +15,22 @@ export default function (compDef) {
     const Items = list.map((item, index) =>{
       let itemLegend = ''
       for (let field in fields) {
+	let label = fields[field].label
+	if (!label || label === '') {
+	  label = field
+	}
 	if (item[field] && item[field] !== '') {
-	  itemLegend = itemLegend + ` ${fields[field].label}: ${item[field]}`
+	  itemLegend = itemLegend + ` ${label}: ${item[field]}`
 	}
       }
-      return <ListItem key={index} legend={itemLegend} leftIcon='receipt'
+      return <ListItem key={index} legend={itemLegend} leftIcon={compDef.icon}
       onClick={() =>{
 	props[`select${componentProperName}`](props[listName][index])
-	props.pushRoute(editURL)
+	props.pushRoute(displayURL)
       }
-	      }/>
+	      }>
+	this is a child
+	</ListItem>
     })
 
     return <div>
