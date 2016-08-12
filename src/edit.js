@@ -25,7 +25,8 @@ export default function (compDef) {
       }
       const field = <div key={fieldName}>
 	    <Input  value={next[fieldName] ||''}
-      type={componentField.uiType} label={componentField.label} name='name' icon='assignment'
+      type={componentField.uiType} label={componentField.label} name='name' icon={componentField.icon}
+      hint={componentField.hint}
       onChange={(e) => {
 	next[fieldName] = e
 	save()
