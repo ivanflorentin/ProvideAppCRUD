@@ -8,6 +8,7 @@ export default function (compDef) {
   const listCapitalName = listName.toUpperCase()
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
   const componentCapitalName = componentName.toUpperCase()
+  const routesName = componentName + 'Routes'
 
   const crudInit = {}
   const crudErrorInit = {}
@@ -24,6 +25,8 @@ export default function (compDef) {
   const LOAD = `LOAD_${listCapitalName}`
   const STORE = `STORE_${componentCapitalName}`
   const DELETE = `DELETE_${componentCapitalName}`
+  const SET_ROUTE = `SET_ROUTE_${componentCapitalName}`
+  const DELETE_ROUTE = `DELETE_ROUTE_${componentCapitalName}`
 
   const actions = {}
   const reducers = {}
@@ -45,6 +48,27 @@ export default function (compDef) {
   }
   actions[`delete${componentProperName}`] = (component) =>{
     return {type: DELETE, component}
+  }
+  actions[`setRoute${componentProperName}`] = (routeDef) =>{
+    return {type: SET_ROUTE, ...routeDef}
+  }
+  actions[`deleteRoute${componentProperName}`] = (routeDef) =>{
+    return {type: DELETE_ROUTE, ...routeDef}
+  }
+  reducers[routesName] = (state = {}, action) =>{
+    switch (action.type) {
+    case SET_ROUTE: {
+      const {name, path} = action
+      return Object.assign({}, state, {name, path})
+    }
+    case DELETE_ROUTE: {
+      const {name} = action
+      const next = Object.assign({}, state)
+      delete next[name]
+      return next
+    }
+    default : return state
+    }
   }
 
   reducers[componentName] = (state = {isValid: false}, action) =>{

@@ -17,8 +17,14 @@ export default function (compDef) {
     const listFields = []
 
     for (let fieldName of fieldNames) {
+      if (fields[fieldName].type && fields[fieldName].type === 'oneToMany') {
+	console.log('oneToMany', fields[fieldName].component, fields[fieldName].remoteField)
+      }
+      if (fields[fieldName].type && fields[fieldName].type === 'manyToOne') {
+	console.log('manyToOne', fields[fieldName].component, fields[fieldName].remoteField)
+      }
 	let label = fields[fieldName].label
-	if (!label || label === '') {
+      if (!label || label === '') {
 	  label = fieldName
 	}
       const componentField = compDef.fields[fieldName]
@@ -28,7 +34,7 @@ export default function (compDef) {
 	error = <span>{next[fieldError]}</span>
       }
       const field = <div key={fieldName}>
-	    <Input  value={next[fieldName] ||''}
+	    <Input value={next[fieldName] ||''}
       type={componentField.uiType} label={label} name='name' icon={componentField.icon}
       hint={componentField.hint}
       onChange={(e) => {
@@ -36,10 +42,9 @@ export default function (compDef) {
 	save()
       }}/>
 	      {error}
-	</div>
+      </div>
 	listFields.push(field)
     }
-
     return (
 	<div>
 	<ListSubHeader caption={listCaption}/>

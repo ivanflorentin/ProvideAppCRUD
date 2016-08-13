@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function (compDef, components) {
   const mainPath = compDef.componentName
-  const componentProperName = compDef.componentName[0].toUpperCase()+
+  const componentProperName = compDef.componentName[0].toUpperCase() +
 	compDef.componentName.substring(1)
   const edit = 'edit' + componentProperName
   const list = 'list' + componentProperName
