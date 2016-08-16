@@ -5,6 +5,7 @@ export default function (compDef) {
   const {componentName,
 	 fields
 	} = compDef
+  let propTypes = {}
 
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
   const fieldNames = Object.keys(fields)
@@ -17,11 +18,18 @@ export default function (compDef) {
     const listFields = []
 
     for (let fieldName of fieldNames) {
-      if (fields[fieldName].type && fields[fieldName].type === 'oneToMany') {
+      if (fields[fieldName].relation && fields[fieldName].relation === 'oneToMany') {
 	console.log('oneToMany', fields[fieldName].component, fields[fieldName].remoteField)
+	const remoteField = fields[fieldName].remoteField
       }
-      if (fields[fieldName].type && fields[fieldName].type === 'manyToOne') {
+      if (fields[fieldName].relation && fields[fieldName].relation === 'manyToOne') {
 	console.log('manyToOne', fields[fieldName].component, fields[fieldName].remoteField)
+      }
+      if (fields[fieldName].relation && fields[fieldName].relation === 'manyToMany') {
+  console.log('manyToMany', fields[fieldName].component, fields[fieldName].remoteField)
+      }
+      if (fields[fieldName].relation && fields[fieldName].relation === 'oneToOne') {
+  console.log('oneToOne', fields[fieldName].component, fields[fieldName].remoteField)
       }
 	let label = fields[fieldName].label
       if (!label || label === '') {
@@ -57,10 +65,11 @@ export default function (compDef) {
 	</div>
     )
   }
-  ComponentEdit.propTypes = {}
+  ComponentEdit.propTypes = propTypes
   ComponentEdit.propTypes[`${componentName}`] = PropTypes.object
   ComponentEdit.propTypes[`save${componentProperName}`] = PropTypes.func
   ComponentEdit.propTypes[`store${componentProperName}`] = PropTypes.func
   ComponentEdit.propTypes.goBack = PropTypes.func
   return ComponentEdit
 }
+//create a separate parser
