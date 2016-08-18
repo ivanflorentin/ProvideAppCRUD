@@ -20,10 +20,16 @@
     "babel-preset-react": "^6.1.4",
     "babel-preset-stage-2": "^6.5.0",
     "node-uuid": "^1.4.7",
+    "normalize.css": "^4.2.0",
     "react": "^15.3.0",
+    "react-addons-css-transition-group": "^15.3.0",
+    "react-addons-update": "^15.3.0",
+    "react-dom": "^15.3.0",
     "react-redux-provide": "^6.0.0-rc.56",
+    "react-toolbox": "^1.1.2",
     "redux-replicate": "^2.0.0-rc.6",
-    "validator": "^5.5.0"
+    "validator": "^5.5.0",
+    "webpack": "^1.13.1"
   },
   "babel": {
     "plugins": [

@@ -7,7 +7,6 @@ export default function (compDef) {
        replication
 	} = compDef
 
-  console.log('replicator', replication)
   const listProperName = listName[0].toUpperCase() + listName.substring(1)
   const listCapitalName = listName.toUpperCase()
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
@@ -63,7 +62,9 @@ export default function (compDef) {
     switch (action.type) {
     case SET_ROUTE: {
       const {name, path} = action
-      return Object.assign({}, state, {name, path})
+      let route = {}
+      route[name] = path
+      return Object.assign({}, state, route)
     }
     case DELETE_ROUTE: {
       const {name} = action

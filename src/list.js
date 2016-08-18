@@ -12,6 +12,7 @@ export default function (compDef) {
     const displayURL = `${url.slice(0, url.lastIndexOf('/')+1)}display`
     const editURL = `${url.slice(0, url.lastIndexOf('/')+1)}edit`
     const list = props[listName]
+    console.log('list', list)
     const Items = list.map((item, index) =>{
       let itemLegend = ''
       for (let field in fields) {
@@ -24,13 +25,24 @@ export default function (compDef) {
 	}
       }
       return <ListItem key={index} legend={itemLegend} leftIcon={compDef.icon}
-      onClick={() =>{
-	props[`select${componentProperName}`](props[listName][index])
-	props.pushRoute(displayURL)
-      }
-	      }>
-	this is a child
-	</ListItem>
+      rightActions={[
+	  <Button key='edit' icon='edit' floating accent mini
+	onClick={() =>{
+	  props[`select${componentProperName}`](props[listName][index])
+	  props.pushRoute(editURL)
+	}}
+	  />,
+	  <Button key='display' icon='description' floating accent mini
+	  	onClick={() =>{
+	  props[`select${componentProperName}`](props[listName][index])
+		  props.pushRoute(displayURL)
+	}}/>,
+          <Button key='select' icon='done' floating accent mini
+	onClick={() =>{
+	  props[`select${componentProperName}`](props[listName][index])
+	  props.goBack()
+	}}/>]}
+	/>
     })
 
     return <div>
@@ -38,6 +50,11 @@ export default function (compDef) {
       <center><ListSubHeader caption={compDef.listTitle} /></center>
       {Items}
     </List>
+      <Button icon='undo'
+    floating accent mini onClick={()=>{
+      props.goBack()
+    }}/>
+
       <Button icon='add'
     floating accent mini onClick={()=>{
       props[`deselect${componentProperName}`]()
