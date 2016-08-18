@@ -142,17 +142,26 @@ export default function (compDef) {
       return action.list
     }
     case STORE: {
-      if (action.component.id === undefined) {
+      if (action.component.uuid === undefined) {
 	return [
 	  ...state,
-	  Object.assign({}, action.component, {id: uuid.v4()})
+	  Object.assign({}, action.component, {uuid: uuid.v4()})
 	]
       }
       const next = state.map((component)=>{
-	if (component.id === action.component.id) {
+	if (component.id === action.component.uuid) {
 	  return action.component
 	}
 	return component
+      })
+      return next
+    }
+    case DELETE: {
+      let next = []
+      state.map((component) =>{
+	if (component.uuid !== action.component.uuid) {
+	  next.push(component)
+	}
       })
       return next
     }

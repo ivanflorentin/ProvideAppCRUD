@@ -41,7 +41,12 @@ export default function (compDef) {
 	onClick={() =>{
 	  props[`select${componentProperName}`](props[listName][index])
 	  props.goBack()
-	}}/>]}
+	}}/>,
+          <Button key='delete' icon='close' floating accent mini
+	onClick={() =>{
+	  props[`delete${componentProperName}`](props[listName][index])
+	}}/>
+      ]}
 	/>
     })
 
@@ -69,6 +74,7 @@ export default function (compDef) {
   ComponentList.propTypes[compDef.listName] = PropTypes.array
   ComponentList.propTypes[`deselect${componentProperName}`] = PropTypes.func
   ComponentList.propTypes[`select${componentProperName}`] = PropTypes.func
+  ComponentList.propTypes[`delete${componentProperName}`] = PropTypes.func
   ComponentList.propTypes.routing = PropTypes.object
   return ComponentList
 }

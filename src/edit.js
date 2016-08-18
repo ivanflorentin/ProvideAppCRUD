@@ -41,7 +41,7 @@ export default function (compDef) {
 	const relationDisplay = props[`${relation}Templates`][`${relation}Display`]
 	console.log('this component was selected', relationDisplay, props[relation])
 	return <div key={fieldName}>
-	  <relationDisplay props={props[relation]}/>
+	  <relationDisplay component={props[relation]}/>
 	  <label>{relation}</label>
 
 	  <Button icon='add' onClick={(e) => {
