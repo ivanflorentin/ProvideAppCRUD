@@ -1,9 +1,13 @@
+import uuid from 'node-uuid'
+
 export default function (compDef) {
   const {componentName,
        fields,
        listName,
        replication
-      } = compDef
+	} = compDef
+
+  console.log('replicator', replication)
   const listProperName = listName[0].toUpperCase() + listName.substring(1)
   const listCapitalName = listName.toUpperCase()
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
@@ -109,19 +113,20 @@ export default function (compDef) {
       return action.list
     }
     case STORE: {
-    if (action.component.index === undefined) {
-      return [
-	...state,
-	Object.assign({}, action.component, {index: state.length})
-      ]
+      if (action.component.id === undefined) {
+	return [
+	  ...state,
+	  Object.assign({}, action.component, {id: uuid.v4()})
+	]
+      }
+      const next = state.map((component)=>{
+	if (component.id === action.component.id) {
+	  return action.component
+	}
+	return component
+      })
+      return next
     }
-    const next = [
-      ...state.slice(0, action.component.index),
-      action.component,
-      ...state.slice(action.component.index +1, state.length)
-    ]
-    return next
-  }
     default: {
       return state
     }
