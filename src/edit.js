@@ -13,7 +13,8 @@ export default function (compDef) {
     if (fields[fieldName].relation) {
       const relation = fields[fieldName].relation
       propTypes[`${relation}Routes`] = PropTypes.object
-      //console.log(fieldName, relation)
+      propTypes[`${relation}Templates`] = PropTypes.object
+      propTypes[relation] = PropTypes.object
     }
   })
   const ComponentEdit = (props) =>{
@@ -22,7 +23,6 @@ export default function (compDef) {
     const store = () =>{props[`store${componentProperName}`](next)}
     const {goBack} = props
     const listCaption = `Ingrese datos de ${componentProperName}`
-    // const listFields = []
     const listFields = fieldNames.map((fieldName)=>{
       let label = fields[fieldName].label
       if (!label || label === '') {
@@ -36,11 +36,15 @@ export default function (compDef) {
       }
       if (fields[fieldName].relation) {
 	const relation = fields[fieldName].relation
-	console.log('relation:', relation)
 	const routes = `${relation}Routes`
 	const listRoute = props[routes][`${relation}List`]
-	return <div key={fieldName}><Button icon='add' onClick={(e) => {
-	  console.log('go to ', props[routes], props.pushRoute)
+	const relationDisplay = props[`${relation}Templates`][`${relation}Display`]
+	console.log('this component was selected', relationDisplay, props[relation])
+	return <div key={fieldName}>
+	  <relationDisplay props={props[relation]}/>
+	  <label>{relation}</label>
+
+	  <Button icon='add' onClick={(e) => {
 	  props.pushRoute(listRoute)
 	}}
 	  /></div>

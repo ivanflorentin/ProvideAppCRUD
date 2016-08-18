@@ -8,7 +8,8 @@ export default function (compDef) {
 
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
   const fieldNames = Object.keys(fields)
-  const ComponentEdit = (props) =>{
+  const ComponentDisplay = (props) =>{
+    console.log('in display', props)
     let next = Object.assign({}, props[componentName])
     const url = props.routing.locationBeforeTransitions.pathname
     const editURL = `${url.slice(0, url.lastIndexOf('/')+1)}edit`
@@ -39,15 +40,15 @@ export default function (compDef) {
     )
   }
 
-  ComponentEdit.propTypes = {
+  ComponentDisplay.propTypes = {
     pushRoute: PropTypes.func,
     goBack: PropTypes.func,
     routing: PropTypes.object
   }
-  ComponentEdit.propTypes[`${componentName}`] = PropTypes.object
-  ComponentEdit.propTypes[`save${componentProperName}`] = PropTypes.func
-  ComponentEdit.propTypes[`store${componentProperName}`] = PropTypes.func
-  return ComponentEdit
+  ComponentDisplay.propTypes[`${componentName}`] = PropTypes.object
+  ComponentDisplay.propTypes[`save${componentProperName}`] = PropTypes.func
+  ComponentDisplay.propTypes[`store${componentProperName}`] = PropTypes.func
+  return ComponentDisplay
 }
 
 

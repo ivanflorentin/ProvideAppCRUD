@@ -12,6 +12,7 @@ export default function (compDef) {
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
   const componentCapitalName = componentName.toUpperCase()
   const routesName = componentName + 'Routes'
+  const templatesName = componentName + 'Templates'
 
   const crudInit = {}
   const crudErrorInit = {}
@@ -30,6 +31,8 @@ export default function (compDef) {
   const DELETE = `DELETE_${componentCapitalName}`
   const SET_ROUTE = `SET_ROUTE_${componentCapitalName}`
   const DELETE_ROUTE = `DELETE_ROUTE_${componentCapitalName}`
+  const SET_TEMPLATE = `SET_TEMPLATE_${componentCapitalName}`
+  const DELETE_TEMPLATE = `DELETE_TEMPLATE_${componentCapitalName}`
 
   const actions = {}
   const reducers = {}
@@ -58,6 +61,13 @@ export default function (compDef) {
   actions[`deleteRoute${componentProperName}`] = (routeDef) =>{
     return {type: DELETE_ROUTE, ...routeDef}
   }
+  actions[`setTemplate${componentProperName}`] = (templateDef) =>{
+    return {type: SET_TEMPLATE, ...templateDef}
+  }
+  actions[`deleteTemplate${componentProperName}`] = (templateDef) =>{
+    return {type: DELETE_TEMPLATE, ...templateDef}
+  }
+
   reducers[routesName] = (state = {}, action) =>{
     switch (action.type) {
     case SET_ROUTE: {
@@ -67,6 +77,24 @@ export default function (compDef) {
       return Object.assign({}, state, route)
     }
     case DELETE_ROUTE: {
+      const {name} = action
+      const next = Object.assign({}, state)
+      delete next[name]
+      return next
+    }
+    default : return state
+    }
+  }
+
+  reducers[templatesName] = (state = {}, action) =>{
+    switch (action.type) {
+    case SET_TEMPLATE: {
+      const {name, template} = action
+      let temp = {}
+      temp[name] = template
+      return Object.assign({}, state, temp)
+    }
+    case DELETE_TEMPLATE: {
       const {name} = action
       const next = Object.assign({}, state)
       delete next[name]
