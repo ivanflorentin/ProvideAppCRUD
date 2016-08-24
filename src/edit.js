@@ -1,5 +1,8 @@
 import React, {PropTypes} from 'react'
-import {ListSubHeader, Button, Input} from 'react-toolbox'
+import {List, ListItem,ListSubHeader, Button, Input} from 'react-toolbox'
+//import relationDisplayCreator from './relationDisplay'
+// console.log('relationDisplay',relationDisplay)
+// relationDisplay({component:{}, componentDef:{}})
 
 export default function (compDef) {
   const {componentName,
@@ -12,12 +15,17 @@ export default function (compDef) {
   fieldNames.map((fieldName)=>{
     if (fields[fieldName].relation) {
       const relation = fields[fieldName].relation
+      const relationProperName = relation.toUpperCase() + relation.substring(1)
       propTypes[`${relation}Routes`] = PropTypes.object
       propTypes[`${relation}Templates`] = PropTypes.object
+      propTypes[`relationDisplay${relationProperName}`] = PropTypes.func
+      propTypes[`${relation}ComponentDef`] = PropTypes.object
+      propTypes[`${relation}List`] = PropTypes.array
       propTypes[relation] = PropTypes.object
     }
   })
   const ComponentEdit = (props) =>{
+//    console.log('props', props)
     let next = Object.assign({}, props[componentName])
     const save = () =>{props[`save${componentProperName}`](next)}
     const store = () =>{props[`store${componentProperName}`](next)}
@@ -36,15 +44,44 @@ export default function (compDef) {
       }
       if (fields[fieldName].relation) {
 	const relation = fields[fieldName].relation
+	console.log(`selected ${relation}`, props[relation])
+	const relationList = props[`${relation}List`]
+	const relationComponentDef = props[`${relation}ComponentDef`]
+	const relationProperName = relation.toUpperCase() + relation.substring(1)
 	const routes = `${relation}Routes`
 	const listRoute = props[routes][`${relation}List`]
-	const relationDisplay = props[`${relation}Templates`][`${relation}Display`]
-	console.log('this component was selected', relationDisplay, props[relation])
+	const relListFields = []
+	//console.log(`relation ${relation} is `, next[relation])
+	if (next[relation] === undefined) {
+	  console.log(`relation ${relation} is undefined`)
+	  next[relation] = []
+	}
+	console.log('is selecting?', next[`${relation}Selecting`])
+	if (next[`${relation}Selecting`]) {
+	  let found = false
+	  next[relation].map((relItem, index) =>{
+	    console.log('item in list:', relItem)
+	    relationList.map((item)=>{
+	      if (item.uuid === relItem) {
+		console.log('already in list', relItem)
+		found = true
+	      }
+	    })
+	  })
+	  if (!found) {
+	    next[relation].push(props[relation].uuid)
+	    save()
+	  }
+	  delete next[`${relation}Selecting`]
+	}
+	//ahora a crear los items para el render
+	
 	return <div key={fieldName}>
-	  <relationDisplay component={props[relation]}/>
 	  <label>{relation}</label>
-
+	  <List>{relListFields}</List>
 	  <Button icon='add' onClick={(e) => {
+	    next[`${relation}Selecting`] = true
+	    save()
 	  props.pushRoute(listRoute)
 	}}
 	  /></div>

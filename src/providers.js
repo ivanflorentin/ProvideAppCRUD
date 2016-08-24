@@ -8,11 +8,13 @@ export default function (compDef) {
 	} = compDef
 
   const listProperName = listName[0].toUpperCase() + listName.substring(1)
+  const componentListName = componentName + 'List'
   const listCapitalName = listName.toUpperCase()
   const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
   const componentCapitalName = componentName.toUpperCase()
   const routesName = componentName + 'Routes'
   const templatesName = componentName + 'Templates'
+  const componentDefinitionName = componentName + 'ComponentDef'
 
   const crudInit = {}
   const crudErrorInit = {}
@@ -33,6 +35,7 @@ export default function (compDef) {
   const DELETE_ROUTE = `DELETE_ROUTE_${componentCapitalName}`
   const SET_TEMPLATE = `SET_TEMPLATE_${componentCapitalName}`
   const DELETE_TEMPLATE = `DELETE_TEMPLATE_${componentCapitalName}`
+  const SET_COMPONENT_DEF = `SET_COMPOENET_DEF_${componentCapitalName}`
 
   const actions = {}
   const reducers = {}
@@ -66,6 +69,18 @@ export default function (compDef) {
   }
   actions[`deleteTemplate${componentProperName}`] = (templateDef) =>{
     return {type: DELETE_TEMPLATE, ...templateDef}
+  }
+  actions[`setComponentDef${componentProperName}`] = (componentDef) =>{
+    return {type: SET_COMPONENT_DEF, componentDef}
+  }
+
+  reducers[componentDefinitionName] = (state = {}, action) =>{
+    switch (action.type) {
+    case SET_COMPONENT_DEF: {
+      return action.componentDef
+    }
+    default: return state
+    }
   }
 
   reducers[routesName] = (state = {}, action) =>{
@@ -136,7 +151,7 @@ export default function (compDef) {
     }
   }
 
-  reducers[listName] = (state = [], action) =>{
+  reducers[componentListName] = (state = [], action) =>{
     switch (action.type) {
     case LOAD: {
       return action.list
