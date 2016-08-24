@@ -45,43 +45,53 @@ export default function (compDef) {
       }
       if (fields[fieldName].relation) {
 	const relation = fields[fieldName].relation
-	console.log(`selected ${relation}`, props[relation].uuid)
+	//console.log(`selected ${relation}`, props[relation].uuid)
 	const relationList = props[`${relation}List`]
 	const relationComponentDef = props[`${relation}ComponentDef`]
 	const relationProperName = relation.toUpperCase() + relation.substring(1)
 	const routes = `${relation}Routes`
 	const listRoute = props[routes][`${relation}List`]
 
-	console.log(`relation ${relation} is `, next[relation])
-	console.log('is selecting?', next[`${relation}Selecting`])
-	console.log('relationList', relationList)
-	console.log('next relationList', next[relation], component[relation])
+	//console.log(`relation ${relation} is `, next[relation])
+	//console.log('is selecting?', next[`${relation}Selecting`])
+	//console.log('relationList', relationList)
 	if (next[relation]===undefined) {next[relation]=[]}
 	if (next[`${relation}Selecting`]) {
 	  if (next[relation].indexOf(props[relation].uuid)===-1) {
-	    console.log('new', props[relation].uuid)
 	    next[relation].push(props[relation].uuid)
 	  }
 	  delete next[`${relation}Selecting`]
 	}
-
 	//ahora a crear los items para el render
-	const relListFields = []
-// 	next[relation].map(relUUID =>{
-// 	  relationList.map(item =>{
-// 	    if (item.uuid===relUUID) {
-// 	      let keys = Object.keys(item)
-// 	      for (let key of keys) {
-// 		relListFields.push(<div>{key}: {item[key]}</div>)
-// 	      }
-// 	    }
-// 	  })
-// 	})
+	const relListFields= relationList.filter(comp =>{
+	  if (next[relation].indexOf(comp.uuid)) {
+	    return true
+	  }
+	  return false
+	}).map(comp=>{
+	  let thisComp = []
+	  for (let key in comp) {
+	    //console.log(`rendering ${key}`, comp[key])
+	    thisComp.push(<div key={key}>{key}: {comp[key]}</div>)
+	  }
+	  return <div key={comp.uuid}>{thisComp}
+	    <Button icon='close' floating accent mini onClick={
+	      () =>{
+		const idx = next[relation].indexOf(comp.uuid)
+		console.log(idx, next[relation][idx])
+		next[relation] = [
+		  ...next[relation].slice(0, idx),
+		  ...next[relation].slice(idx+1)]
+		save()
+	      }
+	    }/>
+	  </div>
+	})
 
 	return <div key={fieldName}>
 	  <label>{relation}</label>
 	  <List>{relListFields}</List>
-	  <Button icon='add' onClick={(e) => {
+	  <Button icon='add' onClick={() => {
 	    next[`${relation}Selecting`] = true
 	    save()
 	  props.pushRoute(listRoute)
