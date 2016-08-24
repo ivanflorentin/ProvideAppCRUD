@@ -25,8 +25,9 @@ export default function (compDef) {
     }
   })
   const ComponentEdit = (props) =>{
-//    console.log('props', props)
-    let next = Object.assign({}, props[componentName])
+    //    console.log('props', props)
+    const component = props[componentName]
+    const next = Object.assign({}, props[componentName])
     const save = () =>{props[`save${componentProperName}`](next)}
     const store = () =>{props[`store${componentProperName}`](next)}
     const {goBack} = props
@@ -44,38 +45,39 @@ export default function (compDef) {
       }
       if (fields[fieldName].relation) {
 	const relation = fields[fieldName].relation
-	console.log(`selected ${relation}`, props[relation])
+	console.log(`selected ${relation}`, props[relation].uuid)
 	const relationList = props[`${relation}List`]
 	const relationComponentDef = props[`${relation}ComponentDef`]
 	const relationProperName = relation.toUpperCase() + relation.substring(1)
 	const routes = `${relation}Routes`
 	const listRoute = props[routes][`${relation}List`]
-	const relListFields = []
-	//console.log(`relation ${relation} is `, next[relation])
-	if (next[relation] === undefined) {
-	  console.log(`relation ${relation} is undefined`)
-	  next[relation] = []
-	}
+
+	console.log(`relation ${relation} is `, next[relation])
 	console.log('is selecting?', next[`${relation}Selecting`])
+	console.log('relationList', relationList)
+	console.log('next relationList', next[relation], component[relation])
+	if (next[relation]===undefined) {next[relation]=[]}
 	if (next[`${relation}Selecting`]) {
-	  let found = false
-	  next[relation].map((relItem, index) =>{
-	    console.log('item in list:', relItem)
-	    relationList.map((item)=>{
-	      if (item.uuid === relItem) {
-		console.log('already in list', relItem)
-		found = true
-	      }
-	    })
-	  })
-	  if (!found) {
+	  if (next[relation].indexOf(props[relation].uuid)===-1) {
+	    console.log('new', props[relation].uuid)
 	    next[relation].push(props[relation].uuid)
-	    save()
 	  }
 	  delete next[`${relation}Selecting`]
 	}
+
 	//ahora a crear los items para el render
-	
+	const relListFields = []
+// 	next[relation].map(relUUID =>{
+// 	  relationList.map(item =>{
+// 	    if (item.uuid===relUUID) {
+// 	      let keys = Object.keys(item)
+// 	      for (let key of keys) {
+// 		relListFields.push(<div>{key}: {item[key]}</div>)
+// 	      }
+// 	    }
+// 	  })
+// 	})
+
 	return <div key={fieldName}>
 	  <label>{relation}</label>
 	  <List>{relListFields}</List>
