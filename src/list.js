@@ -12,8 +12,10 @@ export default function (compDef) {
     const displayURL = `${url.slice(0, url.lastIndexOf('/')+1)}display`
     const editURL = `${url.slice(0, url.lastIndexOf('/')+1)}edit`
     const list = props[`${componentName}List`]
-//    console.log('list', list)
-    const Items = list.map((item, index) =>{
+    console.log('list', list)
+    const ids = Object.keys(list)
+    const Items = ids.map((id, index) =>{
+      const item = list[id]
       let itemLegend = ''
       for (let field in fields) {
 	let label = fields[field].label
@@ -28,23 +30,23 @@ export default function (compDef) {
       rightActions={[
 	  <Button key='edit' icon='edit' floating accent mini
 	onClick={() =>{
-	  props[`select${componentProperName}`](props[`${componentName}List`][index])
+	  props[`select${componentProperName}`](item)
 	  props.pushRoute(editURL)
 	}}
 	  />,
 	  <Button key='display' icon='description' floating accent mini
 	  	onClick={() =>{
-	  props[`select${componentProperName}`](props[`${componentName}List`][index])
+	  props[`select${componentProperName}`](item)
 		  props.pushRoute(displayURL)
 	}}/>,
           <Button key='select' icon='done' floating accent mini
 	onClick={() =>{
-	  props[`select${componentProperName}`](props[`${componentName}List`][index])
+	  props[`select${componentProperName}`](item)
 	  props.goBack()
 	}}/>,
           <Button key='delete' icon='close' floating accent mini
 	onClick={() =>{
-	  props[`delete${componentProperName}`](props[`${componentName}List`][index])
+	  props[`delete${componentProperName}`](item)
 	}}/>
       ]}
 	/>
@@ -71,7 +73,7 @@ export default function (compDef) {
     pushRoute: PropTypes.func,
     goBack: PropTypes.func
   }
-  ComponentList.propTypes[`${compDef.componentName}List`] = PropTypes.array
+  ComponentList.propTypes[`${compDef.componentName}List`] = PropTypes.object
   ComponentList.propTypes[`deselect${componentProperName}`] = PropTypes.func
   ComponentList.propTypes[`select${componentProperName}`] = PropTypes.func
   ComponentList.propTypes[`delete${componentProperName}`] = PropTypes.func

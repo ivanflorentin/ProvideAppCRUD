@@ -16,15 +16,17 @@ export default function (compDef) {
   const templatesName = componentName + 'Templates'
   const componentDefinitionName = componentName + 'ComponentDef'
 
+  let fieldNames = Object.keys(fields)
+
+  /*
   const crudInit = {}
   const crudErrorInit = {}
-  let fieldNames = Object.keys(fields)
   if (fieldNames.length > 0) {
     for (let fieldName of fieldNames) {
       crudInit[fieldName] = fields[fieldName].defaultValue
       crudErrorInit[`${fieldName}Error`] = ''
     }}
-
+  */
   const SELECT = `SELECT_${componentCapitalName}`
   const DESELECT = `DESELECT_${componentCapitalName}`
   const SAVE = `SAVE_${componentCapitalName}`
@@ -36,6 +38,8 @@ export default function (compDef) {
   const SET_TEMPLATE = `SET_TEMPLATE_${componentCapitalName}`
   const DELETE_TEMPLATE = `DELETE_TEMPLATE_${componentCapitalName}`
   const SET_COMPONENT_DEF = `SET_COMPOENET_DEF_${componentCapitalName}`
+  const SAVE_RELATION = `SAVE_RELATION`
+  const DELETE_RELATION = `DELETE_RELATION`
 
   const actions = {}
   const reducers = {}
@@ -72,6 +76,22 @@ export default function (compDef) {
   }
   actions[`setComponentDef${componentProperName}`] = (componentDef) =>{
     return {type: SET_COMPONENT_DEF, componentDef}
+  }
+
+  if (fieldNames.length > 0) {
+    for (let fieldName of fieldNames) {
+      const fieldDef = fields[fieldName]
+      const relationName = fieldDef.relation
+      if (relationName !== undefined) {
+	const relationProperName = relationName[0].toUpperCase() + relationName.substring(1)
+	actions[`save${componentProperName}${relationProperName}`] = (id) =>{
+	  return {type: SAVE_RELATION, fieldName, id}
+	}
+	actions[`delete${componentProperName}${relationProperName}`] = (id) =>{
+	  return {type: DELETE_RELATION, fieldName, id}
+	}
+      }
+    }
   }
 
   reducers[componentDefinitionName] = (state = {}, action) =>{
@@ -122,6 +142,7 @@ export default function (compDef) {
   reducers[componentName] = (state = {isValid: false}, action) =>{
     switch (action.type) {
     case SELECT: {
+      console.log('select', state, action)
       return action.component
     }
     case DESELECT: {
@@ -147,37 +168,50 @@ export default function (compDef) {
       }
       return next
     }
+    case SAVE_RELATION: {
+      const {fieldName, id} = action
+      if (id === undefined) {
+	return state
+      }
+      const next = Object.assign({}, state)
+      next[fieldName] = Object.assign({}, state[fieldName])
+      console.log ('save', fieldName, id, next)
+      if (next[fieldName] === undefined) {
+	next[fieldName] = {}
+      }
+      next[fieldName][id] = id
+      return next
+    }
+    case DELETE_RELATION: {
+      const next = Object.assign({}, state)
+      const {fieldName, id} = action
+      console.log ('delete', fieldName, id, state)
+      next[fieldName] = Object.assign({}, state[fieldName])
+      delete next[fieldName][id]
+      return next
+    }
     default: return state
     }
   }
 
-  reducers[componentListName] = (state = [], action) =>{
+  reducers[componentListName] = (state = {}, action) =>{
     switch (action.type) {
     case LOAD: {
       return action.list
     }
     case STORE: {
-      if (action.component.uuid === undefined) {
-	return [
-	  ...state,
-	  Object.assign({}, action.component, {uuid: uuid.v4()})
-	]
-      }
-      const next = state.map((component)=>{
-	if (component.id === action.component.uuid) {
-	  return action.component
-	}
-	return component
-      })
+       let id = ''
+      const next = {...state}
+      if (action.component.uuid) {
+	id = action.component.uuid
+	next[id] = Object.assign({}, action.component, {uuid: id})
+      } else { id = uuid.v4() }
+      next[id] = Object.assign({}, action.component, {uuid: id})
       return next
     }
     case DELETE: {
-      let next = []
-      state.map((component) =>{
-	if (component.uuid !== action.component.uuid) {
-	  next.push(component)
-	}
-      })
+      const next = Object.assign({}, state)
+      delete next[action.component.uuid]
       return next
     }
     default: {

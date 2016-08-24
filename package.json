@@ -8,6 +8,10 @@
   },
   "author": "Ivan Florentin <ivan@sinergetica.com>",
   "license": "ISC",
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/ivanflorentin/ProvideAppCRUD"
+  },
   "dependencies": {
     "babel-core": "^6.7.4",
     "babel-eslint": "^4.1.5",
