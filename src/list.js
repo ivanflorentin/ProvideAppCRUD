@@ -12,7 +12,7 @@ export default function (compDef) {
     const displayURL = `${url.slice(0, url.lastIndexOf('/')+1)}display`
     const editURL = `${url.slice(0, url.lastIndexOf('/')+1)}edit`
     const list = props[`${componentName}List`]
-    console.log('list', list)
+    //console.log('list', list)
     const ids = Object.keys(list)
     const Items = ids.map((id, index) =>{
       const item = list[id]

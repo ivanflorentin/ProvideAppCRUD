@@ -17,16 +17,6 @@ export default function (compDef) {
   const componentDefinitionName = componentName + 'ComponentDef'
 
   let fieldNames = Object.keys(fields)
-
-  /*
-  const crudInit = {}
-  const crudErrorInit = {}
-  if (fieldNames.length > 0) {
-    for (let fieldName of fieldNames) {
-      crudInit[fieldName] = fields[fieldName].defaultValue
-      crudErrorInit[`${fieldName}Error`] = ''
-    }}
-  */
   const SELECT = `SELECT_${componentCapitalName}`
   const DESELECT = `DESELECT_${componentCapitalName}`
   const SAVE = `SAVE_${componentCapitalName}`
@@ -142,27 +132,30 @@ export default function (compDef) {
   reducers[componentName] = (state = {isValid: false}, action) =>{
     switch (action.type) {
     case SELECT: {
-      console.log('select', state, action)
       return action.component
     }
     case DESELECT: {
       return {}
     }
     case SAVE: {
-      const next = Object.assign({}, action.component)
+      //const next = Object.assign({}, action.component)
+      const next = JSON.parse(JSON.stringify(action.component))
       next.isValid = true
       for (let fieldName of fieldNames) {
 	const value = String(action.component[fieldName])
 	const validators = fields[fieldName].validate
 	if (validators && validators.length > 0) {
-	  let validatorPassed = true
+	  next.isValid= true
+	  next[`${fieldName}Error`] = []
 	  for (let validator of validators) {
 	    const valid = validator.func(value, validator.params)
 	    if (!valid) {
 	      next.isValid = false
-	      next[`${fieldName}Error`] = validator.message
+	      next[`${fieldName}Error`].push(validator.message)
 	    }
-	    else {delete next[`${fieldName}Error`]}
+	  }
+	  if (next.isValidm && next[`${fieldName}Error`]) {
+	    delete next[`${fieldName}Error`]
 	  }
 	}
       }
@@ -175,7 +168,7 @@ export default function (compDef) {
       }
       const next = Object.assign({}, state)
       next[fieldName] = Object.assign({}, state[fieldName])
-      console.log ('save', fieldName, id, next)
+//      console.log ('Reducer saveRelation', fieldName, id, next)
       if (next[fieldName] === undefined) {
 	next[fieldName] = {}
       }
@@ -185,7 +178,7 @@ export default function (compDef) {
     case DELETE_RELATION: {
       const next = Object.assign({}, state)
       const {fieldName, id} = action
-      console.log ('delete', fieldName, id, state)
+  //    console.log ('delete', fieldName, id, state)
       next[fieldName] = Object.assign({}, state[fieldName])
       delete next[fieldName][id]
       return next
