@@ -1,18 +1,14 @@
 import React, {PropTypes} from 'react'
 import {List, ListItem, ListSubHeader, Button} from 'react-toolbox'
 
-export default function (compDef) {
-  const {componentName,
-	 fields,
-	 listName
-	} = compDef
-  const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
-  const ComponentList = (props) =>{
+export default function (modelDef) {
+  const {modelName, fields} = modelDef
+  const modelProperName = modelName[0].toUpperCase() + modelName.substring(1)
+  const ModelList = (props) =>{
     const url = props.routing.locationBeforeTransitions.pathname
     const displayURL = `${url.slice(0, url.lastIndexOf('/')+1)}display`
     const editURL = `${url.slice(0, url.lastIndexOf('/')+1)}edit`
-    const list = props[`${componentName}List`]
-    //console.log('list', list)
+    const list = props[`${modelName}List`]
     const ids = Object.keys(list)
     const Items = ids.map((id, index) =>{
       const item = list[id]
@@ -26,27 +22,27 @@ export default function (compDef) {
 	  itemLegend = itemLegend + ` ${label}: ${item[field]}`
 	}
       }
-      return <ListItem key={index} legend={itemLegend} leftIcon={compDef.icon}
+      return <ListItem key={index} legend={itemLegend} leftIcon={modelDef.icon}
       rightActions={[
 	  <Button key='edit' icon='edit' floating accent mini
 	onClick={() =>{
-	  props[`select${componentProperName}`](item)
+	  props[`select${modelProperName}`](item)
 	  props.pushRoute(editURL)
 	}}
 	  />,
 	  <Button key='display' icon='description' floating accent mini
 	  	onClick={() =>{
-	  props[`select${componentProperName}`](item)
+	  props[`select${modelProperName}`](item)
 		  props.pushRoute(displayURL)
 	}}/>,
           <Button key='select' icon='done' floating accent mini
 	onClick={() =>{
-	  props[`select${componentProperName}`](item)
+	  props[`select${modelProperName}`](item)
 	  props.goBack()
 	}}/>,
           <Button key='delete' icon='close' floating accent mini
 	onClick={() =>{
-	  props[`delete${componentProperName}`](item)
+	  props[`delete${modelProperName}`](item)
 	}}/>
       ]}
 	/>
@@ -54,7 +50,7 @@ export default function (compDef) {
 
     return <div>
       <List selectable ripple>
-      <center><ListSubHeader caption={compDef.listTitle} /></center>
+      <center><ListSubHeader caption={modelDef.listTitle} /></center>
       {Items}
     </List>
       <Button icon='undo'
@@ -64,19 +60,19 @@ export default function (compDef) {
 
       <Button icon='add'
     floating accent mini onClick={()=>{
-      props[`deselect${componentProperName}`]()
+      props[`deselect${modelProperName}`]()
       props.pushRoute(editURL)
     }}/>
       </div>
   }
-  ComponentList.propTypes = {
+  ModelList.propTypes = {
     pushRoute: PropTypes.func,
     goBack: PropTypes.func
   }
-  ComponentList.propTypes[`${compDef.componentName}List`] = PropTypes.object
-  ComponentList.propTypes[`deselect${componentProperName}`] = PropTypes.func
-  ComponentList.propTypes[`select${componentProperName}`] = PropTypes.func
-  ComponentList.propTypes[`delete${componentProperName}`] = PropTypes.func
-  ComponentList.propTypes.routing = PropTypes.object
-  return ComponentList
+  ModelList.propTypes[`${modelDef.modelName}List`] = PropTypes.object
+  ModelList.propTypes[`deselect${modelProperName}`] = PropTypes.func
+  ModelList.propTypes[`select${modelProperName}`] = PropTypes.func
+  ModelList.propTypes[`delete${modelProperName}`] = PropTypes.func
+  ModelList.propTypes.routing = PropTypes.object
+  return ModelList
 }

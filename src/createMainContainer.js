@@ -1,40 +1,40 @@
-import React, {Component, PropTypes} from 'react'
-import {Router, Route, browserHistory} from 'react-router'
+import React, {PropTypes} from 'react'
+import {Router, Route} from 'react-router'
 
 const createMainContainer = (MainRoute, apps, MainContainer) =>{
   const Container = (props) =>{
     for (let appName in apps) {
       const app = apps[appName]
       if (app.appDef) {
-	for (let component of apps[appName].appDef.components) {
-	  const componentName = component.componentName
+	for (let model of apps[appName].appDef.models) {
+	  const modelName = model.modelName
 	  const appPath = `/${apps[appName].appDef.appRoute}/`
-	  const editName = `${componentName}Edit`
-	  const listName = `${componentName}List`
-	  const displayName = `${componentName}Display`
-	  const editPath = `${appPath}${componentName}/edit`
-	  const listPath = `${appPath}${componentName}/list`
-	  const displayPath = `${appPath}${componentName}/display`
-	  const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
-	  const setRoute = `setRoute${componentProperName}`
-	  const setTemplate = `setTemplate${componentProperName}`
-	  const templates= apps[appName].components[componentName]
+	  const editName = `${modelName}Edit`
+	  const listName = `${modelName}List`
+	  const displayName = `${modelName}Display`
+	  const editPath = `${appPath}${modelName}/edit`
+	  const listPath = `${appPath}${modelName}/list`
+	  const displayPath = `${appPath}${modelName}/display`
+	  const modelProperName = modelName[0].toUpperCase() + modelName.substring(1)
+	  const setRoute = `setRoute${modelProperName}`
+	  const setTemplate = `setTemplate${modelProperName}`
+	  const templates= apps[appName].components[modelName]
 	  props[setRoute]({name: editName, path: editPath})
-	  props[`setComponentDef${componentProperName}`](component)
+	  props[`setModelDef${modelProperName}`](model)
 	  props[setRoute]({name: listName, path: listPath})
 	  props[setRoute]({name: displayName, path: displayPath})
 	  props[setTemplate]({name: editName,
-			      template: templates[`edit${componentProperName}`]})
+			      template: templates[`edit${modelProperName}`]})
 	  props[setTemplate]({name: displayName,
-			      template: templates[`display${componentProperName}`]})
+			      template: templates[`display${modelProperName}`]})
  	  props[setTemplate]({name: listName,
-			      template: templates[`list${componentProperName}`]})
+			      template: templates[`list${modelProperName}`]})
 	}
       }
     }
     return <div>
       <Router>
-      <Route path="/" component={MainContainer}>
+      <Route path="/" model={MainContainer}>
       {MainRoute}
     </Route>
       </Router>
@@ -45,13 +45,13 @@ const createMainContainer = (MainRoute, apps, MainContainer) =>{
   for (let appName in apps) {
     const app = apps[appName]
     if (app.appDef) {
-      const components = apps[appName].appDef.components
-      for (let component of components) {
-	const componentName = component.componentName
-	const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
-	const setRoute = `setRoute${componentProperName}`
-	const setTemplate = `setTemplate${componentProperName}`
-	Container.propTypes[`setComponentDef${componentProperName}`] = PropTypes.func
+      const models = apps[appName].appDef.models
+      for (let model of models) {
+	const modelName = model.modelName
+	const modelProperName = modelName[0].toUpperCase() + modelName.substring(1)
+	const setRoute = `setRoute${modelProperName}`
+	const setTemplate = `setTemplate${modelProperName}`
+	Container.propTypes[`setModelDef${modelProperName}`] = PropTypes.func
 	Container.propTypes[setRoute] = PropTypes.func
 	Container.propTypes[setTemplate] = PropTypes.func
       }

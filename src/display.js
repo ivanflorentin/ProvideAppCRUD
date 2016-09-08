@@ -1,13 +1,13 @@
 import React, {PropTypes} from 'react'
 import {List, ListItem, ListSubHeader, Button} from 'react-toolbox'
 
-export default function (compDef) {
-  const {componentName,
+export default function (modelDef) {
+  const {modelName,
 	 fields
-	} = compDef
+	} = modelDef
   let propTypes = {}
 
-  const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
+  const modelProperName = modelName[0].toUpperCase() + modelName.substring(1)
   const fieldNames = Object.keys(fields)
   fieldNames.map((fieldName)=>{
     if (fields[fieldName].relation) {
@@ -15,52 +15,47 @@ export default function (compDef) {
       const relationProperName = relation[0].toUpperCase() + relation.substring(1)
       propTypes[`${relation}Routes`] = PropTypes.object
       propTypes[`${relation}Templates`] = PropTypes.object
-      propTypes[`save${componentProperName}${relationProperName}`] = PropTypes.func
-      propTypes[`delete${componentProperName}${relationProperName}`] = PropTypes.func
-      propTypes[`${relation}ComponentDef`] = PropTypes.object
+      propTypes[`save${modelProperName}${relationProperName}`] = PropTypes.func
+      propTypes[`delete${modelProperName}${relationProperName}`] = PropTypes.func
+      propTypes[`${relation}ModelDef`] = PropTypes.object
       propTypes[`${relation}List`] = PropTypes.object
       propTypes[relation] = PropTypes.object
     }
   })
 
 
-  const ComponentDisplay = (props) =>{
-    console.log('in display', props)
-    let state = Object.assign({}, props[componentName])
+  const ModelDisplay = (props) =>{
+    let state = Object.assign({}, props[modelName])
     const url = props.routing.locationBeforeTransitions.pathname
     const editURL = `${url.slice(0, url.lastIndexOf('/')+1)}edit`
     const {goBack} = props
-    const listCaption = `Datos de ${componentProperName}`
+    const listCaption = `Datos de ${modelProperName}`
     const listFields = []
     const relationFields = []
 
     for (let fieldName of fieldNames) {
-      console.log('field', state[fieldName])
-      const componentField = compDef.fields[fieldName]
-      if (componentField.relation) {
-	const relComponents = []
-	const relation = componentField.relation
+      const modelField = modelDef.fields[fieldName]
+      if (modelField.relation) {
+	const relModels = []
+	const relation = modelField.relation
 	const relationList = props[`${relation}List`]
-	console.log('Props relationList', `${relation}List`, relationList)
-	console.log(`relation, ${componentField.relation}`, state[fieldName])
  	if (state[fieldName]) {
 	  const ids = Object.keys(state[fieldName])
-  	  ids.map((id, index) => {
- 	    console.log('rel id', relationList[id])
+  	  ids.map((id) => {
 	    const relComp = []
 	    const relCompKeys = Object.keys(relationList[id])
 	    relCompKeys.map((name) =>{
 	      relComp.push(<div>{name}: {relationList[id][name]}</div>)
 	    })
- 	    relComponents.push(relComp)
+ 	    relModels.push(relComp)
  	  })
-	relationFields.push(<div key={componentField.relation}>
-			    {componentField.relation}, {relComponents}</div>)
+	relationFields.push(<div key={modelField.relation}>
+			    {modelField.relation}, {relModels}</div>)
 	}
       } else {
 	const field = <div key={fieldName}>
 	    <ListItem caption={state[fieldName] ||''}
-	legend={componentField.label} righticon={componentField.icon}/>
+	legend={modelField.label} righticon={modelField.icon}/>
 	  </div>
 	  listFields.push(field)
       }
@@ -72,7 +67,7 @@ export default function (compDef) {
 	{listFields}
 	<div>Relaciones: {relationFields} </div>
       </List>
-	<Button icon='edit' floating disabled={!state.isValid} accent mini onClick={(e)=>{
+	<Button icon='edit' floating disabled={!state.isValid} accent mini onClick={()=>{
 	  props.pushRoute(editURL)
 	}}/>
 	<Button icon='undo' floating accent mini onClick={()=>{goBack()}}/>
@@ -80,14 +75,14 @@ export default function (compDef) {
     )
   }
 
-  ComponentDisplay.propTypes = propTypes
-  ComponentDisplay.propTypes.pushRoute = PropTypes.func
-  ComponentDisplay.propTypes.goBack = PropTypes.func
-  ComponentDisplay.propTypes.routing = PropTypes.object
-  ComponentDisplay.propTypes[`${componentName}`] = PropTypes.object
-  ComponentDisplay.propTypes[`save${componentProperName}`] = PropTypes.func
-  ComponentDisplay.propTypes[`store${componentProperName}`] = PropTypes.func
-  return ComponentDisplay
+  ModelDisplay.propTypes = propTypes
+  ModelDisplay.propTypes.pushRoute = PropTypes.func
+  ModelDisplay.propTypes.goBack = PropTypes.func
+  ModelDisplay.propTypes.routing = PropTypes.object
+  ModelDisplay.propTypes[`${modelName}`] = PropTypes.object
+  ModelDisplay.propTypes[`save${modelProperName}`] = PropTypes.func
+  ModelDisplay.propTypes[`store${modelProperName}`] = PropTypes.func
+  return ModelDisplay
 }
 
 

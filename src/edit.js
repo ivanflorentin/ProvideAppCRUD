@@ -1,13 +1,13 @@
 import React, {Component, PropTypes} from 'react'
 import {List, ListSubHeader, Button, Input} from 'react-toolbox'
 
-export default function (compDef) {
-  const {componentName,
+export default function (modelDef) {
+  const {modelName,
 	 fields
-	} = compDef
+	} = modelDef
   let propTypes = {}
 
-  const componentProperName = componentName[0].toUpperCase() + componentName.substring(1)
+  const modelProperName = modelName[0].toUpperCase() + modelName.substring(1)
   const fieldNames = Object.keys(fields)
   fieldNames.map((fieldName)=>{
     if (fields[fieldName].relation) {
@@ -15,26 +15,23 @@ export default function (compDef) {
       const relationProperName = relation[0].toUpperCase() + relation.substring(1)
       propTypes[`${relation}Routes`] = PropTypes.object
       propTypes[`${relation}Templates`] = PropTypes.object
-      propTypes[`save${componentProperName}${relationProperName}`] = PropTypes.func
-      propTypes[`delete${componentProperName}${relationProperName}`] = PropTypes.func
-      propTypes[`${relation}ComponentDef`] = PropTypes.object
+      propTypes[`save${modelProperName}${relationProperName}`] = PropTypes.func
+      propTypes[`delete${modelProperName}${relationProperName}`] = PropTypes.func
+      propTypes[`${relation}ModelDef`] = PropTypes.object
       propTypes[`${relation}List`] = PropTypes.object
       propTypes[relation] = PropTypes.object
     }
   })
-  class ComponentEdit extends Component {
+  class ModelEdit extends Component {
     constructor(props) {
       super(props)
-      this.state = JSON.parse(JSON.stringify(this.props[componentName]))
-      console.log('isValid?', this.state.isValid)
-      console.log('\n in constructor, props', this.props[componentName], 'state', this.state)
-      this.save = () =>{this.props[`save${componentProperName}`](this.state)}
-      this.store = () =>{this.props[`store${componentProperName}`](this.state)}
+      this.state = JSON.parse(JSON.stringify(this.props[modelName]))
+      this.save = () =>{this.props[`save${modelProperName}`](this.state)}
+      this.store = () =>{this.props[`store${modelProperName}`](this.state)}
       this.goBack = this.props.goBack
     }
 
-    componentWillMount() {
-      console.log('\n in mount, props', this.props[componentName], 'state', this.state)
+    modelWillMount() {
       this.relations = {}
       fieldNames.map((fieldName) =>{
 	const field = fields[fieldName]
@@ -42,9 +39,8 @@ export default function (compDef) {
 	if (this.state[relation]) {this.state[relation]={}}
 	if (relation) {
 // 	  const relationProperName = relation[0].toUpperCase() + relation.substring(1)
-// 	  const saveRelation = this.props[`save${componentProperName}${relationProperName}`]
+// 	  const saveRelation = this.props[`save${modelProperName}${relationProperName}`]
 	  if (this.state[`${relation}Selecting`]) {
-	    console.log(`${relation}Selecting`)
 	    const id = this.props[relation].uuid
 	    if (!this.state[relation]) {this.state[relation] = []}
 	    this.state[relation][id] = id
@@ -55,36 +51,36 @@ export default function (compDef) {
       })
     }
 
-    componentDidMount() {}
-    shouldComponentUpdate() {
+    modelDidMount() {}
+    shouldModelUpdate() {
       return true
     }
 
-    componentWillReceiveProps() {
-//       this.state = JSON.parse(JSON.stringify(this.props[componentName]))
+    modelWillReceiveProps() {
+//       this.state = JSON.parse(JSON.stringify(this.props[modelName]))
 //       console.log('receiveProps == isValid?', this.state.isValid)
     }
 
-    componentWillUpdate() {
-      console.log('componentWillUpdate')
+    modelWillUpdate() {
+      console.log('modelWillUpdate')
     }
-    componentDidUpdate() {console.log('componentDidUpdate')}
+    modelDidUpdate() {console.log('modelDidUpdate')}
 
-    componentWillUnmount() {
+    modelWillUnmount() {
       this.save()
     }
 
     render() {
       console.log('Render')
-      this.state = JSON.parse(JSON.stringify(this.props[componentName]))
+      this.state = JSON.parse(JSON.stringify(this.props[modelName]))
       console.log('in Update == isValid?', this.state.isValid)
-      const listCaption = `Ingrese datos de ${componentProperName}`
+      const listCaption = `Ingrese datos de ${modelProperName}`
       const listFields = fieldNames.map((fieldName)=>{
 	let label = fields[fieldName].label
 	if (!label || label === '') {
 	  label = fieldName
 	}
-	const componentField = compDef.fields[fieldName]
+	const modelField = modelDef.fields[fieldName]
 	const fieldError = `${fieldName}Error`
 	let error = []
 	console.log('errors', this.state[fieldError])
@@ -94,10 +90,10 @@ export default function (compDef) {
 	if (fields[fieldName].relation) {
 	  const relation = fields[fieldName].relation
 	  const relationList = this.props[`${relation}List`]
-//	  const relationComponentDef = this.props[`${relation}ComponentDef`]
+//	  const relationModelDef = this.props[`${relation}ModelDef`]
 //	  const relationProperName = relation[0].toUpperCase() + relation.substring(1)
-//	  const saveRelation = this.props[`save${componentProperName}${relationProperName}`]
-//	  const deleteRelation = this.props[`delete${componentProperName}${relationProperName}`]
+//	  const saveRelation = this.props[`save${modelProperName}${relationProperName}`]
+//	  const deleteRelation = this.props[`delete${modelProperName}${relationProperName}`]
 	  const routes = `${relation}Routes`
 	  const listRoute = this.props[routes][`${relation}List`]
 	  let relListFields= []
@@ -133,8 +129,8 @@ export default function (compDef) {
 	}
 	return <div key={fieldName}>
 	  <Input value={this.state[fieldName] ||''}
-	type={componentField.uiType} label={label} name='name' icon={componentField.icon}
-	hint={componentField.hint}
+	type={modelField.uiType} label={label} name='name' icon={modelField.icon}
+	hint={modelField.hint}
 	onChange={(e) => {
 	  this.state[fieldName] = e
 	  this.save()
@@ -154,11 +150,11 @@ export default function (compDef) {
     }
   }
 
-  ComponentEdit.propTypes = propTypes
-  ComponentEdit.propTypes[`${componentName}`] = PropTypes.object
-  ComponentEdit.propTypes[`save${componentProperName}`] = PropTypes.func
-  ComponentEdit.propTypes[`store${componentProperName}`] = PropTypes.func
-  ComponentEdit.propTypes.goBack = PropTypes.func
-  ComponentEdit.propTypes.pushRoute = PropTypes.func
-  return ComponentEdit
+  ModelEdit.propTypes = propTypes
+  ModelEdit.propTypes[`${modelName}`] = PropTypes.object
+  ModelEdit.propTypes[`save${modelProperName}`] = PropTypes.func
+  ModelEdit.propTypes[`store${modelProperName}`] = PropTypes.func
+  ModelEdit.propTypes.goBack = PropTypes.func
+  ModelEdit.propTypes.pushRoute = PropTypes.func
+  return ModelEdit
 }

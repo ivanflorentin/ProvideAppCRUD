@@ -138,7 +138,6 @@ export default function (compDef) {
       return {}
     }
     case SAVE: {
-      //const next = Object.assign({}, action.component)
       const next = JSON.parse(JSON.stringify(action.component))
       next.isValid = true
       for (let fieldName of fieldNames) {
@@ -168,7 +167,6 @@ export default function (compDef) {
       }
       const next = Object.assign({}, state)
       next[fieldName] = Object.assign({}, state[fieldName])
-//      console.log ('Reducer saveRelation', fieldName, id, next)
       if (next[fieldName] === undefined) {
 	next[fieldName] = {}
       }
@@ -178,7 +176,6 @@ export default function (compDef) {
     case DELETE_RELATION: {
       const next = Object.assign({}, state)
       const {fieldName, id} = action
-  //    console.log ('delete', fieldName, id, state)
       next[fieldName] = Object.assign({}, state[fieldName])
       delete next[fieldName][id]
       return next
