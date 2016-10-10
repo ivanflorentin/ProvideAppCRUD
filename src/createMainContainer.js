@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react'
 import {Router, Route} from 'react-router'
 
 const createMainContainer = (MainRoute, apps, MainContainer) =>{
+//  console.log('createMainContainer', MainRoute, apps, MainContainer)
   const Container = (props) =>{
     for (let appName in apps) {
       const app = apps[appName]
@@ -34,7 +35,7 @@ const createMainContainer = (MainRoute, apps, MainContainer) =>{
     }
     return <div>
       <Router>
-      <Route path="/" model={MainContainer}>
+      <Route path="/" component={MainContainer}>
       {MainRoute}
     </Route>
       </Router>

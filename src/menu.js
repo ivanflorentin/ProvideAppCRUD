@@ -8,13 +8,13 @@ export default function (appDef) {
 	} = appDef
   const AppMenu = (props) =>{
     const {pushRoute} = props
-    const buttons = appDef.components.map((component, index) =>{
-      const {componentName} = component
-      const componentProperName = componentName[0].toUpperCase() +
-	    componentName.substring(1)
-      return <Button key={`${componentProperName}${index}`}
-    label={componentProperName} primary onClick={() =>{
-      pushRoute(`/${appRoute}/${component.componentName}/list`)
+    const buttons = appDef.models.map((model, index) =>{
+      const {modelName} = model
+      const modelProperName = modelName[0].toUpperCase() +
+	    modelName.substring(1)
+      return <Button key={`${modelProperName}${index}`}
+    label={modelProperName} primary onClick={() =>{
+      pushRoute(`/${appRoute}/${model.modelName}/list`)
     }}/>
     })
 

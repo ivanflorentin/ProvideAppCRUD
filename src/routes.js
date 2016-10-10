@@ -10,9 +10,9 @@ export default function (modelDef, models) {
   const display = 'display' + modelProperName
   return (
       <Route key={mainPath} path={mainPath}>
-      <Route path='edit' model={models[edit]}/>
-      <Route path='list' model={models[list]}/>
-      <Route path='display' model={models[display]}/>
+      <Route path='edit' component={models[edit]}/>
+      <Route path='list' component={models[list]}/>
+      <Route path='display' component={models[display]}/>
       </Route>
   )
 }
